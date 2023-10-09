@@ -42,7 +42,7 @@ import java.nio.file.Files;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Tests that servlets defined by annodations in a static module are picked up
+ * Tests that servlets defined by annotations in a static module are picked up
  *
  * @author Stuart Douglas
  */
@@ -50,8 +50,10 @@ import static org.junit.Assert.assertEquals;
 @RunAsClient
 public class WebModuleDeploymentTestCase {
 
+    //TODO check ts.bootable or ts.bootable.preview
+
     public static void doSetup() throws Exception {
-        File testModuleRoot = new File(getModulePath(), "org/jboss/test/webModule");
+        File testModuleRoot = new File(getModulePath(), "test/web-annotations");
         File file = testModuleRoot;
         while (!getModulePath().equals(file.getParentFile()))
             file = file.getParentFile();
@@ -61,7 +63,7 @@ public class WebModuleDeploymentTestCase {
 
     @AfterClass
     public static void tearDown() throws Exception {
-        File testModuleRoot = new File(getModulePath(), "org/jboss/test/webModule");
+        File testModuleRoot = new File(getModulePath(), "test/web-annotations");
         File file = testModuleRoot;
         while (!getModulePath().equals(file.getParentFile()))
             file = file.getParentFile();
@@ -88,13 +90,13 @@ public class WebModuleDeploymentTestCase {
             throw new IllegalArgumentException("Could not create " + file);
         }
 
-        URL url = WebModuleDeploymentTestCase.class.getResource("module.xml");
+        URL url = WebModuleDeploymentTestCase.class.getResource("/modules/web-annotations/module.xml");
         if (url == null) {
             throw new IllegalStateException("Could not find module.xml");
         }
         copyFile(new File(file, "module.xml"), url.openStream());
 
-        JavaArchive jar = ShrinkWrap.create(JavaArchive.class, "webTest.jar");
+        JavaArchive jar = ShrinkWrap.create(JavaArchive.class, "web-annotations-module-test.jar");
         jar.addClasses(ModuleServlet.class);
 
 
@@ -107,7 +109,7 @@ public class WebModuleDeploymentTestCase {
         IndexWriter writer = new IndexWriter(data);
         writer.write(index);
         jar.addAsManifestResource(new ByteArrayAsset(data.toByteArray()), "jandex.idx");
-        FileOutputStream jarFile = new FileOutputStream(new File(file, "webTest.jar"));
+        FileOutputStream jarFile = new FileOutputStream(new File(file, "web-annotations-module-test.jar"));
         try {
             jar.as(ZipExporter.class).exportTo(jarFile);
         } finally {
@@ -150,7 +152,7 @@ public class WebModuleDeploymentTestCase {
         doSetup();
         WebArchive jar = ShrinkWrap.create(WebArchive.class, "webAnnotation.war");
         jar.addClasses(WebModuleDeploymentTestCase.class);
-        jar.addAsManifestResource(new StringAsset("Dependencies: org.jboss.test.webModule meta-inf annotations\n"), "MANIFEST.MF");
+        jar.addAsManifestResource(new StringAsset("Dependencies: test.web-annotations meta-inf annotations\n"), "MANIFEST.MF");
         return jar;
     }
 

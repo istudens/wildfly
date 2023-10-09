@@ -5,10 +5,10 @@
   ~ SPDX-License-Identifier: Apache-2.0
   -->
 
-<module xmlns="urn:jboss:module:1.5" name="org.jboss.test.webModule">
+<module xmlns="urn:jboss:module:1.5" name="test.web-annotations">
 
     <resources>
-        <resource-root path="webTest.jar"/>
+        <resource-root path="web-annotations-module-test.jar"/>
     </resources>
 
     <dependencies>

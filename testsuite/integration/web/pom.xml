@@ -38,6 +38,8 @@
         <bootable.ts.config-as.copy-users.phase>none</bootable.ts.config-as.copy-users.phase>
         <bootable.copy-external-taglib-module-xml.phase>none</bootable.copy-external-taglib-module-xml.phase>
         <bootable.create-external-taglib-module.phase>none</bootable.create-external-taglib-module.phase>
+        <bootable.copy-web-annotations-module-xml.phase>none</bootable.copy-web-annotations-module-xml.phase>
+        <bootable.create-web-annotations-module.phase>none</bootable.create-web-annotations-module.phase>
         <bootable-jar-web-profile-packaging.phase>none</bootable-jar-web-profile-packaging.phase>
         <bootable-jar-web-legacy-security-packaging.phase>none</bootable-jar-web-legacy-security-packaging.phase>
         <bootable-jar-undertow-https-packaging.phase>none</bootable-jar-undertow-https-packaging.phase>
@@ -272,6 +274,25 @@
                             </resources>
                         </configuration>
                     </execution>
+
+                    <execution>
+                        <id>bootable.copy-web-annotations-module-xml</id>
+                        <phase>${bootable.copy-web-annotations-module-xml.phase}</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/web-annotations-module/modules/test/web-annotations/main</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/test/resources/modules/web-annotations</directory>
+                                    <includes>
+                                        <include>**/module.xml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <!-- Pack external tag library module before bootable JAR is packed -->
@@ -292,6 +313,28 @@
                                 <include>**/META-INF/external.tld</include>
                             </includes>
                             <finalName>external-taglib-module</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Pack web annotations module before bootable JAR is packed -->
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bootable.create-web-annotations-module</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>${bootable.create-web-annotations-module.phase}</phase>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/web-annotations-module/modules/test/web-annotations/main</outputDirectory>
+                            <classesDirectory>${project.build.testOutputDirectory}</classesDirectory>
+                            <classifier>test</classifier>
+                            <includes>
+                                <include>**/org/jboss/as/test/integration/web/annotationsmodule/ModuleServlet.class</include>
+                            </includes>
+                            <finalName>web-annotations-module</finalName>
                         </configuration>
                     </execution>
                 </executions>
@@ -334,6 +377,7 @@
                             <extra-server-content-dirs>
                                 <extra-content>${basedir}/target/wildfly-users</extra-content>
                                 <extra-content>${basedir}/target/external-taglib-module</extra-content>
+                                <extra-content>${basedir}/target/web-annotations-module</extra-content>
                             </extra-server-content-dirs>
                         </configuration>
                     </execution>
@@ -371,6 +415,7 @@
                             <extra-server-content-dirs>
                                 <extra-content>${basedir}/target/wildfly-users</extra-content>
                                 <extra-content>${basedir}/target/external-taglib-module</extra-content>
+                                <extra-content>${basedir}/target/web-annotations-module</extra-content>
                             </extra-server-content-dirs>
                         </configuration>
                     </execution>
@@ -409,6 +454,7 @@
                             <extra-server-content-dirs>
                                 <extra-content>${basedir}/target/wildfly-users</extra-content>
                                 <extra-content>${basedir}/target/external-taglib-module</extra-content>
+                                <extra-content>${basedir}/target/web-annotations-module</extra-content>
                             </extra-server-content-dirs>
                         </configuration>
                     </execution>
@@ -443,6 +489,7 @@
                             <extra-server-content-dirs>
                                 <extra-content>${basedir}/target/wildfly-users</extra-content>
                                 <extra-content>${basedir}/target/external-taglib-module</extra-content>
+                                <extra-content>${basedir}/target/web-annotations-module</extra-content>
                             </extra-server-content-dirs>
                         </configuration>
                     </execution>
@@ -477,6 +524,7 @@
                             <extra-server-content-dirs>
                                 <extra-content>${basedir}/target/wildfly-users</extra-content>
                                 <extra-content>${basedir}/target/external-taglib-module</extra-content>
+                                <extra-content>${basedir}/target/web-annotations-module</extra-content>
                             </extra-server-content-dirs>
                         </configuration>
                     </execution>
@@ -989,6 +1037,8 @@
                 <bootable.ts.config-as.copy-users.phase>generate-test-resources</bootable.ts.config-as.copy-users.phase>
                 <bootable.copy-external-taglib-module-xml.phase>generate-test-resources</bootable.copy-external-taglib-module-xml.phase>
                 <bootable.create-external-taglib-module.phase>process-test-classes</bootable.create-external-taglib-module.phase>
+                <bootable.copy-web-annotations-module-xml.phase>generate-test-resources</bootable.copy-web-annotations-module-xml.phase>
+                <bootable.create-web-annotations-module.phase>process-test-classes</bootable.create-web-annotations-module.phase>
                 <bootable-jar-web-profile-packaging.phase>process-test-classes</bootable-jar-web-profile-packaging.phase>
                 <bootable-jar-web-legacy-security-packaging.phase>process-test-classes</bootable-jar-web-legacy-security-packaging.phase>
                 <bootable-jar-undertow-https-packaging.phase>process-test-classes</bootable-jar-undertow-https-packaging.phase>
@@ -1065,7 +1115,7 @@
                                         <!-- requires ee-concurrency -->
                                         <exclude>org/jboss/as/test/integration/ee/concurrent/*TestCase.java</exclude>
                                         <!-- writes a test module to the modules' path -->
-                                        <exclude>org/jboss/as/test/integration/web/annotationsmodule/WebModuleDeploymentTestCase.java</exclude>
+<!--                                        <exclude>org/jboss/as/test/integration/web/annotationsmodule/WebModuleDeploymentTestCase.java</exclude>-->
                                         <!-- requires https -->
                                         <exclude>org/jboss/as/test/integration/web/handlers/RequestDumpingHandlerTestCase.java</exclude>
                                     </excludes>
@@ -1151,7 +1201,7 @@
                                         <!-- requires ee-concurrency -->
                                         <exclude>org/jboss/as/test/integration/ee/concurrent/*TestCase.java</exclude>
                                         <!-- writes a test module to the modules' path -->
-                                        <exclude>org/jboss/as/test/integration/web/annotationsmodule/WebModuleDeploymentTestCase.java</exclude>
+<!--                                        <exclude>org/jboss/as/test/integration/web/annotationsmodule/WebModuleDeploymentTestCase.java</exclude>-->
                                         <!-- requires https -->
                                         <exclude>org/jboss/as/test/integration/web/handlers/RequestDumpingHandlerTestCase.java</exclude>
                                     </excludes>
@@ -1183,7 +1233,7 @@
                                         <!-- requires ee-concurrency -->
                                         <exclude>org/jboss/as/test/integration/ee/concurrent/*TestCase.java</exclude>
                                         <!-- writes a test module to the modules' path -->
-                                        <exclude>org/jboss/as/test/integration/web/annotationsmodule/WebModuleDeploymentTestCase.java</exclude>
+<!--                                        <exclude>org/jboss/as/test/integration/web/annotationsmodule/WebModuleDeploymentTestCase.java</exclude>-->
                                         <!-- requires https -->
                                         <exclude>org/jboss/as/test/integration/web/handlers/RequestDumpingHandlerTestCase.java</exclude>
                                     </excludes>
@@ -1219,6 +1269,8 @@
                 <bootable.ts.config-as.copy-users.phase>generate-test-resources</bootable.ts.config-as.copy-users.phase>
                 <bootable.copy-external-taglib-module-xml.phase>generate-test-resources</bootable.copy-external-taglib-module-xml.phase>
                 <bootable.create-external-taglib-module.phase>process-test-classes</bootable.create-external-taglib-module.phase>
+                <bootable.copy-web-annotations-module-xml.phase>generate-test-resources</bootable.copy-web-annotations-module-xml.phase>
+                <bootable.create-web-annotations-module.phase>process-test-classes</bootable.create-web-annotations-module.phase>
                 <bootable-jar-web-profile-packaging.phase>process-test-classes</bootable-jar-web-profile-packaging.phase>
                 <bootable-jar-undertow-https-packaging.phase>process-test-classes</bootable-jar-undertow-https-packaging.phase>
                 <bootable-jar-jaxrs-packaging.phase>process-test-classes</bootable-jar-jaxrs-packaging.phase>
