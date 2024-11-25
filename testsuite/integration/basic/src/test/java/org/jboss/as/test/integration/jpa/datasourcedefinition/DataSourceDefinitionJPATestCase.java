@@ -22,6 +22,7 @@
 
 package org.jboss.as.test.integration.jpa.datasourcedefinition;
 
+import static org.jboss.as.test.shared.integration.ejb.security.PermissionUtils.createPermissionsXmlAsset;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -35,12 +36,15 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.test.api.ArquillianResource;
+//import org.jboss.as.test.shared.TestSuiteEnvironment;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.net.SocketPermission;
 
 /**
  * Transaction tests
@@ -59,6 +63,9 @@ public class DataSourceDefinitionJPATestCase {
         jar.addPackage(DataSourceDefinitionJPATestCase.class.getPackage());
         jar.addAsManifestResource(DataSourceDefinitionJPATestCase.class.getPackage(), "persistence.xml", "persistence.xml");
         jar.addAsManifestResource(new StringAsset("Dependencies: com.h2database.h2\n"), "MANIFEST.MF");
+        jar.addAsManifestResource(createPermissionsXmlAsset(
+                new SocketPermission("localhost", "resolve")           // TestSuiteEnvironment.getHttpAddress()
+        ), "permissions.xml");
         return jar;
     }
 
